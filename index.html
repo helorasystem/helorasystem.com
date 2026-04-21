@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helora System — Software Development</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --fg: #f0ece4;
+      --accent: #c8f060;
+      --muted: #555;
+      --border: #222;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.6;
+    }
+
+    main {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(2rem, 5vw, 4rem);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+      color: var(--fg);
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(3rem, 8vh, 6rem) 0;
+      gap: 2.5rem;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.15s forwards;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.25s forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .description {
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.35s forwards;
+    }
+
+    /* Contact CTA */
+    .contact-block {
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.45s forwards;
+    }
+
+    .contact-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .email-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--fg);
+      text-decoration: none;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-family: 'DM Serif Display', serif;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.3rem;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .email-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .email-link svg {
+      transition: transform 0.2s ease;
+    }
+
+    .email-link:hover svg {
+      transform: translate(3px, -3px);
+    }
+
+    /* Footer */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.55s forwards;
+    }
+
+    /* Decorative line */
+    .line-accent {
+      position: fixed;
+      top: 0;
+      right: clamp(1.5rem, 4vw, 3.5rem);
+      width: 1px;
+      height: 100vh;
+      background: linear-gradient(to bottom, var(--accent) 0%, transparent 60%);
+      opacity: 0.15;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="line-accent"></div>
+
+  <main>
+    <header>
+      <div class="logo">Helora<span>.</span>System</div>
+      <div class="status">
+        <span class="dot"></span>
+        Available for projects
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Software Development Studio</p>
+
+      <h1>We build<br><em>software</em><br>that matters.</h1>
+
+      <p class="description">
+        Custom software solutions, web applications and digital products — 
+        crafted with precision for businesses ready to move forward.
+      </p>
+
+      <div class="contact-block">
+        <p class="contact-label">Get in touch</p>
+        <a class="email-link" href="mailto:hi@helorasystem.com">
+          hi@helorasystem.com
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 13L13 3M13 3H6M13 3V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 Helora System</span>
+      <span>helorasystem.com</span>
+    </footer>
+  </main>
+
+</body>
+</html>
